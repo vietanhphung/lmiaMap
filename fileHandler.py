@@ -1,11 +1,19 @@
 import pandas as pd
 import requests
-import io
-def handleExcel(path):
-    r = requests.get(path, stream=True)
-    with io.BytesIO(r.content) as fh:
-        df = pd.io.excel.read_excel(fh, sheet_name=0)
-    return df.tolist()
+import certifi
+import os
+
+provinces = {'newbrunswick', 'newfoundlandandlabrador', 'yukon', 'manitoba', 'northwestterritories', 'nunavut', 'alberta', 'nova scotia', 'saskatchewan', 'britishcolumbia', 'quebec', 'princeedwardisland', 'ontario'}
+
+
+def handleExcel(path, year):
+    
+    os.environ['SSL_CERT_FILE'] = certifi.where()
+    data = pd.read_excel(path, header=None)
+    print('Accessing ' + str(year) + ' excel file')
+    data.insert(0,'year',year)
+    filtered_data = data[data[data.columns[-1]].notna() & (data[data.columns[-1]] != '') &(data[data.columns[1]] != 'Province/Territory')  ]
+    return filtered_data
 
 
 
