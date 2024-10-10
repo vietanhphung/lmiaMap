@@ -21,12 +21,13 @@ for j in range(len(r["result"]["resources"])-1,len(r["result"]["resources"])-12,
     if language in url2: #language = en
         
         fType = url2.split('.')[-1] #find file type to call appropriate handler
-        match fType: #match file type to correct handler
-            case 'xlsx':
-                data =  handleExcel(url2 , year)
-                dt = pd.concat([dt, data], ignore_index=True)
-                print(str(year) + ' data updated')
+        if fType == 'xlsx': #match file type to correct handler
+            data =  handleExcel(url2 , year)
+            dt = pd.concat([dt, data], ignore_index=True)
+            print(str(year) + ' data updated')
   
+dt.columns = ['year', 'province', 'stream', 'employer', 'address', 'occupation', 'incorporate_status', 'requested_lmia', 'requested']
+
 
 dt.to_csv('data.csv', index=False)
 print("All data saved to csv file")

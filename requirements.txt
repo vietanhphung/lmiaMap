@@ -1,0 +1,6 @@
+pandas
+requests
+certifi
+openpyxl
+mysql-connector-python
+python-dotenv
