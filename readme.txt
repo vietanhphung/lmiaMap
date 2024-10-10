@@ -1,4 +1,4 @@
-Requirement: Install docker
+Requirement: Install docker, make
 
 Install steps:
 cd to working folder:
