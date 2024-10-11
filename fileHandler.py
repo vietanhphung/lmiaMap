@@ -2,6 +2,7 @@ import pandas as pd
 import requests
 import certifi
 import os
+import geocode
 
 provinces = {'newbrunswick', 'newfoundlandandlabrador', 'yukon', 'manitoba', 'northwestterritories', 'nunavut', 'alberta', 'nova scotia', 'saskatchewan', 'britishcolumbia', 'quebec', 'princeedwardisland', 'ontario'}
 
@@ -14,10 +15,6 @@ def handleExcel(path, year):
     data.insert(0,'year',year)
     filtered_data = data[data[data.columns[-1]].notna() & (data[data.columns[-1]] != '') &(data[data.columns[1]] != 'Province/Territory')  ]
     return filtered_data
-
-
-
-
 
 
 

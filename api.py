@@ -1,6 +1,7 @@
 import requests
 from fileHandler import *
 import pandas as pd
+from geocode import geocode
 
 url ="https://open.canada.ca/data/api/action/package_show?id=f82f66f2-a22b-4511-bccf-e1d74db39ae5"
 
@@ -22,12 +23,16 @@ for j in range(len(r["result"]["resources"])-1,len(r["result"]["resources"])-12,
         
         fType = url2.split('.')[-1] #find file type to call appropriate handler
         if fType == 'xlsx': #match file type to correct handler
-            data =  handleExcel(url2 , year)
+            data =  handleExcel(url2 , year, )
             dt = pd.concat([dt, data], ignore_index=True)
             print(str(year) + ' data updated')
-  
-dt.columns = ['year', 'province', 'stream', 'employer', 'address', 'occupation', 'incorporate_status', 'requested_lmia', 'requested']
+           
+dt.columns = ['year', 'coordinate' 'province', 'stream', 'employer', 'address', 'occupation', 'incorporate_status', 'requested_lmia', 'requested']
 
+
+# Apply the geocode function to the 'Address' column
+print("Fetching all coordinates...")
+dt['Latitude'], dt['Longitude'] = zip(*dt['address'].apply(geocode))
 
 dt.to_csv('data.csv', index=False)
 print("All data saved to csv file")

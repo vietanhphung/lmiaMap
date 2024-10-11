@@ -4,3 +4,4 @@ certifi
 openpyxl
 mysql-connector-python
 python-dotenv
+googlemaps
