@@ -1,44 +1,25 @@
 import mysql.connector
 import pandas as pd
-from dotenv import dotenv_values
-import pathlib
+from db_con import db_connect
 
-# Define paths for configuration and script
-configuration_path = pathlib.Path(__file__).parent.resolve()
-script_path = pathlib.Path(__file__).parent.resolve()
-config = dotenv_values(f"{configuration_path}/variables.conf")
 
-# Load database credentials from .env file
-password = config["db_password"]
-user = config["dbuser"]
-db = config["dbname"]
-tb = config["tbname"]
-print(tb)
-
-# Database connection parameters
-db_config = {
-    'host': '127.0.0.1',
-    'user': user,
-    'password': password,
-    'database': db
-}
-
-# CSV file path
+# Load data from CSV
 csv_file_path = 'data.csv'
+df = pd.read_csv(csv_file_path)
 
 # Connect to the database
+db_config = db_connect()
 conn = mysql.connector.connect(**db_config)
 cursor = conn.cursor()
 
-# Load data from CSV
-df = pd.read_csv(csv_file_path)
+tb='lmia_tb'
 
 
 insert_query = f"""
-    INSERT INTO {tb} (year, province, stream, employer, address, occupation, incorporate_status, requested_lmia, requested)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+    INSERT INTO {tb} (year, province, stream, employer, address, occupation, incorporate_status, requested_lmia, requested, latitude, longitude)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """
-print(insert_query)
+
 
 # Insert data into the table
 for index, row in df.iterrows():
@@ -52,7 +33,9 @@ for index, row in df.iterrows():
         row['occupation'],       
         row['incorporate_status'],
         row['requested_lmia'],    
-        row['requested']          
+        row['requested'],
+        row['latitude'],
+        row['longitude']          
     ))
 
 # Commit the changes and close the connection

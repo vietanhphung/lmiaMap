@@ -1,4 +1,4 @@
-year,coordinateprovince,stream,employer,address,occupation,incorporate_status,requested_lmia,requested,Latitude,Longitude
+year,province,stream,employer,address,occupation,incorporate_status,requested_lmia,requested,latitude,longitude
 2024,Newfoundland and Labrador,High Wage,St. Mary's Bay Fisheries Inc.,"St. Mary's, NL A0B 3B0","9213-Supervisors, food, beverage and associated products processing",Unknown,1,1,46.9127598,-53.5717838
 2024,Nova Scotia,High Wage,3328040 Nova Scotia Limited,"Beaver Bank, NS B4E 3A5","0124-Advertising, marketing and public relations managers",Unknown,1,1,44.8096815,-63.6842232
 2024,Nova Scotia,High Wage,Dragon Ebikes Ltd.,"Halifax, NS B3K 3B4",1223-Human resources and recruitment officers,Unknown,1,1,44.6527301,-63.5848491

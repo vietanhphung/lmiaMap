@@ -42,8 +42,7 @@ def index():
         lat=coordinates['latitude'],
         text=coordinates['hover_info'],
         mode='markers',
-        hoverinfo='text',
-        
+        hoverinfo='text'
     ))
 
     fig.update_layout(

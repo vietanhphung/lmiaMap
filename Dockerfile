@@ -28,8 +28,8 @@ COPY . .
 # Set environment variable to use the virtual environment's Python
 ENV PATH="/app/venv/bin:$PATH"
 
-# Expose MySQL port
-EXPOSE 3306
+
+EXPOSE 5000
 
 # Start MySQL server and your application (if applicable)
 ENTRYPOINT service mysql start && chmod +x init_db.sh && /bin/bash 

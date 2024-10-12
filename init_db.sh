@@ -40,8 +40,10 @@ CREATE TABLE IF NOT EXISTS \`${tb_name}\` (
     address VARCHAR(255),
     occupation VARCHAR(255),
     incorporate_status VARCHAR(50),
-    requested_lmia INT,
-    requested INT
+    requested_lmia VARCHAR(20),
+    requested VARCHAR(20),
+    latitude VARCHAR(20),
+    longitude VARCHAR(20)
 );
 
 MYSQL_SCRIPT

@@ -27,12 +27,12 @@ for j in range(len(r["result"]["resources"])-1,len(r["result"]["resources"])-12,
             dt = pd.concat([dt, data], ignore_index=True)
             print(str(year) + ' data updated')
            
-dt.columns = ['year', 'coordinate' 'province', 'stream', 'employer', 'address', 'occupation', 'incorporate_status', 'requested_lmia', 'requested']
+dt.columns = ['year',  'province', 'stream', 'employer', 'address', 'occupation', 'incorporate_status', 'requested_lmia', 'requested']
 
 
 # Apply the geocode function to the 'Address' column
 print("Fetching all coordinates...")
-dt['Latitude'], dt['Longitude'] = zip(*dt['address'].apply(geocode))
+dt['latitude'], dt['longitude'] = zip(*dt['address'].apply(geocode))
 
 dt.to_csv('data.csv', index=False)
 print("All data saved to csv file")
