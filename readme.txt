@@ -1,6 +1,8 @@
-LMIA Docker Project Setup
+
 
 This project uses Docker to manage a MySQL database and containerized application for the LMIA project. You will install Docker and Make to manage and run the necessary processes.
+Live Demo Link https://vcforests.com/map
+
 
 ********** Prerequisites **************
 
