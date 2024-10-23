@@ -28,7 +28,7 @@ def index():
     
  # Execute the query and fetch data
     coordinates = pd.read_sql(query, conn) #To create map
-    employers_list = coordinates[['employer', 'province', 'address', 'requested_lmia']].values.tolist()
+    employers_list = coordinates[['employer', 'province', 'address', 'occ', 'requested_lmia']].values.tolist()
     coordinates['hover_info'] = (coordinates['employer'] + '<br>' +coordinates['address'] + '<br> code: ' +coordinates['occ']  )
     
 
@@ -87,7 +87,7 @@ def index():
                         padding: 20px;                 
                         border: 1px solid #ccc;         
                         background-color: #f2f2f2;     
-                        height: 100px;
+                        height: 150px;
                         overflow-y: auto;
                     }
             </style>
@@ -125,13 +125,15 @@ def index():
                             <th>Company Name</th>
                             <th>Province / Territories</th>
                             <th>Address</th>
-                            <th>Requested LMIA</th>
+                            <th>NOC code</th>
+                            <th>Total number of Requested LMIA from employer</th>
                         </tr>
                         {% for employer in employers_list %}
                             <tr><td>{{ employer[0] }}</td>
                                 <td>{{ employer[1] }}</td>
                                 <td>{{ employer[2] }}</td>
                                 <td>{{ employer[3] }}</td>
+                                <td>{{ employer[4] }}</td>
                             </tr>
                         {% endfor %}
                     </table>
