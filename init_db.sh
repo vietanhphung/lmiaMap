@@ -1,5 +1,6 @@
 #!/bin/bash
 
+"""
 # Prompt for MySQL root password
 read -sp "Enter MySQL root password or create new one: " root_password
 echo
@@ -18,10 +19,17 @@ if [ -z "$user_pass" ]; then
     echo "Error: Password cannot be empty."
     exit 1
 fi
+"""
 
 # Database name
-db_name="lmia_db"
+db_name=${MYSQL_DATABASE}
 tb_name="lmia_tb"
+root_password=${MYSQL_ROOT_PASSWORD}
+user=${MYSQL_USER}
+user_pass=${MYSQL_PASSWORD}
+
+
+
 
 # Execute MySQL commands
 mysql -u root -p"${root_password}"  <<MYSQL_SCRIPT

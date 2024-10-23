@@ -2,13 +2,15 @@ import mysql.connector
 import pandas as pd
 import plotly.graph_objects as go
 from flask import Flask, render_template_string, request
-from db_con import db_connect  # Ensure this module has your database connection logic
+from db_con import db_connect  
+from formHandler import *
+
 
 # Initialize Flask app
 app = Flask(__name__)
 
 # Define the route for the web app
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/map', methods=['GET', 'POST'])
 def index():
     # Connect to the database
     db_config = db_connect()
@@ -17,25 +19,29 @@ def index():
     # Fetch latitude and longitude from the database using pandas
     tb = "lmia_tb"
     
-    # Get province input from the form
-    province = request.form.get('province', '')  # Default to an empty string if not provided
-    occupation = request.form.get('occupation', '')
+    # Get filter values
+    filterProvince = request.form.getlist('province')
+    filterJob = request.form.getlist('jobCode')
 
-    # Build SQL query based on occupation input
-    if occupation:
-        query = f"""
-        SELECT latitude, longitude, employer, province, requested_lmia, address, LEFT(occupation, 4) AS occ FROM {tb} WHERE occupation LIKE '{occupation}%';
-        """
-    else:
-        query = f"""
-        SELECT latitude, longitude, province, employer, address, requested_lmia, LEFT(occupation, 4) AS occ FROM {tb};
-        """
+    query = queryHandler(filterProvince,filterJob)
+
     
-    # Execute the query and fetch data
+ # Execute the query and fetch data
     coordinates = pd.read_sql(query, conn) #To create map
     employers_list = coordinates[['employer', 'province', 'address', 'requested_lmia']].values.tolist()
     coordinates['hover_info'] = (coordinates['employer'] + '<br>' +coordinates['address'] + '<br> code: ' +coordinates['occ']  )
     
+
+
+    # Fech from database to create drop-down list for filter function
+    checkBoxProvince = f""" SELECT DISTINCT province FROM {tb}"""
+    province_list =  pd.read_sql(checkBoxProvince, conn) # to create dropdown list
+    province_values = province_list[['province']].values.tolist()
+    
+    checkBoxJobCode = f""" SELECT DISTINCT occupation FROM {tb} ORDER BY LEFT(occupation, 4) """
+    job_list =  pd.read_sql(checkBoxJobCode, conn) # to create dropdown list
+    jobCode_values = job_list[['occupation']].values.tolist()
+   
     # Create the Plotly figure
     fig = go.Figure(data=go.Scattergeo(
         lon=coordinates['longitude'],
@@ -71,21 +77,49 @@ def index():
     return render_template_string('''
         <html>
             <head>
-                <title>Employer Locations</title>
+                <title>Employer Locations </title>
+                <style>
+                    .container {
+                        display: flex;                 
+                        margin: 20px;              
+                    }
+                    .box {
+                        padding: 20px;                 
+                        border: 1px solid #ccc;         
+                        background-color: #f2f2f2;     
+                        height: 100px;
+                        overflow-y: auto;
+                    }
+            </style>
+                                  
             </head>
             <body>
-                <h1>Employer Locations</h1>
+                <h1>Employer Locations </h1>
                 <div style="border: 3px solid gray">{{ graph_html|safe }}</div>
                 
-                <h2>Filters by Occupation</h2>
+                <h2>Filter</h2>
                 <form method="post">
-                    <input type="text" name="occupation" placeholder="4 digit occupation code" />
-                    <input type="submit" value="Search" />
-                    <input type="submit" name="reset" value="Reset" formaction="/" />
+                                  
+                    <div class="container" >
+                        <div class = "box" >
+                            {% for value in province_values %}
+                            <input type="checkbox" name="province" value="{{ value[0] }}" />
+                            <label for="province"> {{value[0]}}</label><br>
+                            {% endfor %}
+                        </div>
+                        <div class="box" >
+                            {% for value in jobCode_values %}
+                            <input type="checkbox" name="jobCode" value="{{ value[0] }}" />
+                            <label for="jobCode"> {{value[0]}}</label><br>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <input type="submit" value="Filter" name="filter" />
+                    <input type="submit" name="reset" value="Reset" formaction="/map" />
                 </form>
 
                 <h2>List of Employers</h2>
-                <div>
+                <div style="height: 500px;overflow-y: auto;" >
                     <table>
                         <tr>
                             <th>Company Name</th>
@@ -104,7 +138,7 @@ def index():
                 </div>
             </body>
         </html>
-    ''', graph_html=graph_html, employers_list=employers_list)
+    ''', graph_html=graph_html, employers_list=employers_list, province_values=province_values, jobCode_values=jobCode_values)
 
 # Run the Flask application
 if __name__ == '__main__':

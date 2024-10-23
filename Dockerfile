@@ -31,5 +31,9 @@ ENV PATH="/app/venv/bin:$PATH"
 
 EXPOSE 5000
 
-# Start MySQL server and your application (if applicable)
-ENTRYPOINT service mysql start && chmod +x init_db.sh && /bin/bash 
+# Make your init script executable
+RUN chmod +x init_db.sh
+
+# Set the entry point
+ENTRYPOINT ["sh", "-c", "service mysql start && ./init_db.sh && python3 load.py && python3 display.py && gunicorn -b 0.0.0.0:5000 display:app"]
+
