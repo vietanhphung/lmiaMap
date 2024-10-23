@@ -1,10 +1,14 @@
+# Makefile for managing Docker containers for the LMIA project
 
+# Build Docker image
 build_container:
 	docker build -t lmia .
 
+# Stop and remove all containers and images
 destroy_container:
-	docker system prune -a
+	make destroy_all
 
+# Initialize and run the container with MySQL settings
 init_container:
 	docker run  \
 	--name lmia-container \
@@ -16,28 +20,48 @@ init_container:
 	-p 5000:5000 \
 	lmia /bin/bash
 
+# Start the container and follow logs
 run_container:
-	docker start lmia-container;
-	docker exec -it lmia-container /bin/bash
+	docker start lmia-container; \
+	docker logs -f lmia-container
 
+# Copy a file into the running container
 copy:
 	@if [ -z "$(f)" ]; then \
 		echo "Usage: make copy f=<filename>"; \
 	else \
 		docker cp $(f) $(shell docker ps -q):/app; \
-		echo "cp $(f) $(docker ps -q):/app;";  \
+		echo "cp $(f) $(docker ps -q):/app"; \
 	fi
 
+# Stop the running container
 stop_container:
 	docker stop lmia-container
 
+# Restart the container
 restart_container:
 	docker restart lmia-container
+
+# Stop all running containers
+stop_all_containers:
+	docker stop $(docker ps -q)
+
+# Destroy all containers and images
+destroy_all:
+	docker stop $(docker ps -q) || true; \
+	docker rm $(docker ps -a -q); \
+	docker rmi $(docker images -q)
+
+# Help command to list available commands
 help:
 	@echo "Makefile Commands:"
-	@echo "  build_container    - Build the Docker image named 'lmia'."
-	@echo "  destroy_container   - Remove all stopped containers and prune unused images."
-	@echo "  run                - Run the Docker container based on the 'lmia' image, expose port 5000."
-	@echo "  copy               - Copy a file into the running container."
-	@echo "  stop               - Stop all running container."
-	@echo "                      Usage: make copy f=<filename>"
+	@echo "  build_container       - Build the Docker image named 'lmia'. Only use for initial setup." 
+	@echo "  init_container        - Run the Docker container with MySQL setup, expose port 5000. Only use for initial setup."
+	@echo "  run_container         - Start the container and follow logs."
+	@echo "  destroy_container     - Stop and remove all containers and images."
+	@echo "  copy                  - Copy a file into the running container. Usage: make copy f=<filename>."
+	@echo "  stop_container        - Stop the 'lmia-container'."
+	@echo "  stop_all_containers   - Stop all running containers."
+	@echo "  restart_container     - Restart the 'lmia-container'."
+	@echo "  destroy_all           - Remove all containers and images."
+	@echo "  help                  - Show this help message."
